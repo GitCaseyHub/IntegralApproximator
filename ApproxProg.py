@@ -107,7 +107,6 @@ def midPointRule(coords,rect_length,function):
     return np.array([eval(cleanup(function)) for x in coords],dtype=float)
 
 def drawTrapezoids(leftCoords,rightCoords,rect_distance,function,ax):
-    # Currently only works for all positive functions; issue with negative because left_eval and right_eval need to be reversed when drawing polygon in that situation
     counter=0
     currentSum=0
     y=[]

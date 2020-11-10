@@ -9,7 +9,7 @@ def figurePlot():
     ax = fig.add_subplot(111) 
 
     function = input('What function would you like to estimate the integral of?\n')
-    typeOfRule = input('\nWhat type of rule would you like to estimate the integral with? Righthand(R), Lefthand(L), or Midpoint(M)?\n')
+    typeOfRule = input('\nWhat type of rule would you like to estimate the integral with? Righthand(R), Lefthand(L), Midpoint(M), or Trapezoid(T)?\n')
     num_rect = int(input('\nHow many rectangles would you like to approximate the integral with?\n'))
     bounds = input('\nInput the lower and upper bounds of the integrable region in the form [a,b]:\n')
     lower_bound = int(bounds.split(',')[0][1:])
@@ -18,30 +18,42 @@ def figurePlot():
     current_x = lower_bound
     counter=0
     coords = []
+    leftCoords = []
+    rightCoords = []
+    trapUpperCoord=[]
     sumApprox = 0
     x_points = np.array(list(decimalRange(lower_bound,upper_bound, (upper_bound-lower_bound)/1000)),dtype=float)
     y_points = np.array([eval(cleanup(function)) for x in x_points],dtype=float)
 
     for i in range(num_rect):
+        leftCoords.append(current_x+rect_distance*counter)
+        rightCoords.append(current_x + rect_distance*(counter+1))
         coords.append(current_x+rect_distance*counter)
         counter+=1
     
     if typeOfRule == 'R':
         y = rightHandRule(coords,rect_distance,function)
         
+    elif typeOfRule=='L':
+        y = np.array([eval(cleanup(function)) for x in coords],dtype=float)
+        
     elif typeOfRule == 'M':
         y = midPointRule(coords,rect_distance,function)
+        
+    elif typeOfRule == 'T':
+        drawTrapezoids()
         
     else:
         print('You didn\'t input a recognizable rule, so this will be approximated via the left_hand rule.\n')
         
-    typeOfRule='Righthand' if typeOfRule=='R' else('Lefthand' if typeOfRule=='L' else 'Midpoint')
-        
-    coordCount=0
-    for coord in range(num_rect):
-        ax.add_patch(matplotlib.patches.Rectangle((coords[coordCount],0),rect_distance,y[coordCount],color='red'))
-        sumApprox+=rect_distance*y[coordCount]
-        coordCount+=1
+    typeOfRule='Righthand' if typeOfRule=='R' else('Lefthand' if typeOfRule=='L' else ('Midpoint' if typeOfRule=='M' else 'Trapezoid'))
+    
+    if typeOfRule !='Trapezoid':
+        coordCount=0
+        for coord in range(num_rect):
+            ax.add_patch(matplotlib.patches.Rectangle((coords[coordCount],0),rect_distance,y[coordCount],color='red'))
+            sumApprox+=rect_distance*y[coordCount]
+            coordCount+=1
 
     plt.xlim(lower_bound -(0.05)*abs(lower_bound),upper_bound + 0.05*abs(upper_bound)) 
     
@@ -92,3 +104,6 @@ def rightHandRule(coords,rect_length,function):
 def midPointRule(coords,rect_length,function):
     coords = [x+rect_length/2 for x in coords]
     return np.array([eval(cleanup(function)) for x in coords],dtype=float)
+
+def drawTrapezoids():
+    pass

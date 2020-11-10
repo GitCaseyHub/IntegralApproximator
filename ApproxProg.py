@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 import matplotlib
-from mpmath import *
+import mpmath
 import numpy as np
 import sys
   
@@ -10,7 +10,7 @@ def figurePlot():
 
     function = input('What function would you like to estimate the integral of?\n')
     typeOfRule = input('\nWhat type of rule would you like to estimate the integral with? Righthand(R), Lefthand(L), Midpoint(M), or Trapezoid(T)?\n')
-    num_rect = int(input('\nHow many rectangles would you like to approximate the integral with?\n'))
+    num_rect = int(input('\nHow many bins would you like to approximate the integral with?\n'))
     bounds = input('\nInput the lower and upper bounds of the integrable region in the form [a,b]:\n')
     lower_bound = int(bounds.split(',')[0][1:])
     upper_bound = int(bounds.split(',')[1][:-1])
@@ -20,7 +20,6 @@ def figurePlot():
     coords = []
     leftCoords = []
     rightCoords = []
-    trapUpperCoord=[]
     sumApprox = 0
     x_points = np.array(list(decimalRange(lower_bound,upper_bound, (upper_bound-lower_bound)/1000)),dtype=float)
     y_points = np.array([eval(cleanup(function)) for x in x_points],dtype=float)
@@ -41,8 +40,9 @@ def figurePlot():
         y = midPointRule(coords,rect_distance,function)
         
     elif typeOfRule == 'T':
-        drawTrapezoids()
-        
+        y = drawTrapezoids(leftCoords,rightCoords,rect_distance,function,ax)
+        sumApprox+=y[len(y)-1]
+        y = y[:-1]
     else:
         print('You didn\'t input a recognizable rule, so this will be approximated via the left_hand rule.\n')
         
@@ -73,7 +73,7 @@ def figurePlot():
     plt.show() 
 
     print('Estimated Sum using '+typeOfRule+' rule: '+str(sumApprox))
-    repeat = input('Would you like to estimate another function?')
+    repeat = input('Would you like to estimate another function?\n')
     
     if repeat=='yes':
         figurePlot()
@@ -105,5 +105,30 @@ def midPointRule(coords,rect_length,function):
     coords = [x+rect_length/2 for x in coords]
     return np.array([eval(cleanup(function)) for x in coords],dtype=float)
 
-def drawTrapezoids():
-    pass
+def drawTrapezoids(leftCoords,rightCoords,rect_distance,function,ax):
+    # Currently only works for all positive functions; issue with negative because left_eval and right_eval need to be reversed when drawing polygon in that situation
+    counter=0
+    currentSum=0
+    y=[]
+    for i in leftCoords:
+        x=leftCoords[counter]
+        left_eval = eval(cleanup(function))
+        x=rightCoords[counter]
+        right_eval = eval(cleanup(function))
+        
+        if left_eval > right_eval:
+            y.append(left_eval)
+            ax.add_patch(matplotlib.patches.Rectangle((rightCoords[counter],0),rect_distance,right_eval,color='red'))
+            ax.add_patch(matplotlib.patches.Polygon([[leftCoords[counter],right_eval],[rightCoords[counter],right_eval],[leftCoords[counter],left_eval]],color='red'))
+            currentSum+=(rightCoords[counter]-leftCoords[counter])*(right_eval)
+        
+        else:
+            y.append(right_eval)
+            ax.add_patch(matplotlib.patches.Rectangle((leftCoords[counter],0),rect_distance,left_eval,color='red'))
+            ax.add_patch(matplotlib.patches.Polygon([[leftCoords[counter],left_eval],[rightCoords[counter],left_eval],[rightCoords[counter],right_eval]],color='red'))
+            currentSum+=(rightCoords[counter]-leftCoords[counter])*(left_eval)
+
+        currentSum+=(1/2)*abs(rightCoords[counter]-leftCoords[counter])*abs(right_eval-left_eval)
+        counter+=1
+    y.append(currentSum)
+    return y

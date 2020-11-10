@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 import matplotlib
-import mpmath
+from mpmath import *
 import numpy as np
 import sys
   
@@ -43,6 +43,7 @@ def figurePlot():
         y = drawTrapezoids(leftCoords,rightCoords,rect_distance,function,ax)
         sumApprox+=y[len(y)-1]
         y = y[:-1]
+        y = np.array(y,dtype=float)
     else:
         print('You didn\'t input a recognizable rule, so this will be approximated via the left_hand rule.\n')
         
@@ -66,10 +67,10 @@ def figurePlot():
     else:
         plt.ylim(min(y)-1,max(y)+1)
         
-    plt.ylabel('Y Values')
-    plt.xlabel('X Values')
+    plt.ylabel('y Values')
+    plt.xlabel('x Values')
     plt.plot(x_points,y_points)
-
+    plt.title('Graph of '+function)
     plt.show() 
 
     print('Estimated Sum using '+typeOfRule+' rule: '+str(sumApprox))
@@ -118,14 +119,23 @@ def drawTrapezoids(leftCoords,rightCoords,rect_distance,function,ax):
         
         if left_eval > right_eval:
             y.append(left_eval)
-            ax.add_patch(matplotlib.patches.Rectangle((rightCoords[counter],0),rect_distance,right_eval,color='red'))
-            ax.add_patch(matplotlib.patches.Polygon([[leftCoords[counter],right_eval],[rightCoords[counter],right_eval],[leftCoords[counter],left_eval]],color='red'))
+            if right_eval < 0:
+                ax.add_patch(matplotlib.patches.Rectangle((leftCoords[counter],0),rect_distance,left_eval,color='red'))
+                ax.add_patch(matplotlib.patches.Polygon([[leftCoords[counter],left_eval],[rightCoords[counter],left_eval],[rightCoords[counter],right_eval]],color='red'))
+            
+            else:
+                ax.add_patch(matplotlib.patches.Rectangle((leftCoords[counter],0),rect_distance,right_eval,color='red'))
+                ax.add_patch(matplotlib.patches.Polygon([[leftCoords[counter],right_eval],[rightCoords[counter],right_eval],[leftCoords[counter],left_eval]],color='red'))
             currentSum+=(rightCoords[counter]-leftCoords[counter])*(right_eval)
         
         else:
             y.append(right_eval)
-            ax.add_patch(matplotlib.patches.Rectangle((leftCoords[counter],0),rect_distance,left_eval,color='red'))
-            ax.add_patch(matplotlib.patches.Polygon([[leftCoords[counter],left_eval],[rightCoords[counter],left_eval],[rightCoords[counter],right_eval]],color='red'))
+            if left_eval < 0:
+                ax.add_patch(matplotlib.patches.Rectangle((leftCoords[counter],0),rect_distance,right_eval,color='red'))
+                ax.add_patch(matplotlib.patches.Polygon([[leftCoords[counter],right_eval],[rightCoords[counter],right_eval],[leftCoords[counter],left_eval]],color='red'))
+            else:
+                ax.add_patch(matplotlib.patches.Rectangle((leftCoords[counter],0),rect_distance,left_eval,color='red'))
+                ax.add_patch(matplotlib.patches.Polygon([[leftCoords[counter],left_eval],[rightCoords[counter],left_eval],[rightCoords[counter],right_eval]],color='red'))
             currentSum+=(rightCoords[counter]-leftCoords[counter])*(left_eval)
 
         currentSum+=(1/2)*abs(rightCoords[counter]-leftCoords[counter])*abs(right_eval-left_eval)

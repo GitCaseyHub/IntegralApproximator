@@ -45,6 +45,7 @@ def figurePlot():
     plt.ylim([min(y)-1,max(y)+1])
     plt.ylabel('Y Values')
     plt.xlabel('X Values')
+    plt.plot(coords,y)
 
     plt.show() 
 

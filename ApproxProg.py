@@ -20,25 +20,23 @@ def figurePlot():
     coords = []
     sumApprox = 0
     x_points = np.array(list(decimalRange(lower_bound,upper_bound, (upper_bound-lower_bound)/1000)),dtype=float)
+    y_points = np.array([eval(cleanup(function)) for x in x_points],dtype=float)
 
     for i in range(num_rect):
         coords.append(current_x+rect_distance*counter)
         counter+=1
-        
+    
     if typeOfRule == 'R':
-        coords = rightHandRule(coords,rect_distance)
+        y = rightHandRule(coords,rect_distance,function)
         
     elif typeOfRule == 'M':
-        coords = midPointRule(coords,rect_distance)
+        y = midPointRule(coords,rect_distance,function)
         
     else:
         print('You didn\'t input a recognizable rule, so this will be approximated via the left_hand rule.\n')
         
     typeOfRule='Righthand' if typeOfRule=='R' else('Lefthand' if typeOfRule=='L' else 'Midpoint')
-    
-    y = np.array([eval(cleanup(function)) for x in coords],dtype=float)
-    y_points = np.array([eval(cleanup(function)) for x in x_points],dtype=float)
-    
+        
     coordCount=0
     for coord in range(num_rect):
         ax.add_patch(matplotlib.patches.Rectangle((coords[coordCount],0),rect_distance,y[coordCount],color='red'))
@@ -65,7 +63,7 @@ def figurePlot():
     print('Estimated Sum using '+typeOfRule+' rule: '+str(sumApprox))
     repeat = input('Would you like to estimate another function?')
     
-    if repeat==('Yes' or 'Y' or 'y' or 'yes'):
+    if repeat=='yes':
         figurePlot()
         
     else:
@@ -87,10 +85,10 @@ def decimalRange(start, stop, step=1.0):
         yield i
         i += step
     
-def rightHandRule(coords,rect_length):
+def rightHandRule(coords,rect_length,function):
     coords = [x+rect_length for x in coords]
-    return coords
+    return np.array([eval(cleanup(function)) for x in coords],dtype=float)
 
-def midPointRule(coords,rect_length):
+def midPointRule(coords,rect_length,function):
     coords = [x+rect_length/2 for x in coords]
-    return coords
+    return np.array([eval(cleanup(function)) for x in coords],dtype=float)

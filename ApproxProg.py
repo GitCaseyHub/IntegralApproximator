@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt 
 import matplotlib
 from mpmath import *
+import numpy as np
   
 def figurePlot():
     fig = plt.figure() 
@@ -17,7 +18,7 @@ def figurePlot():
     counter=0
     coords = []
     sumApprox = 0
-    x_points = list(decimalRange(lower_bound,upper_bound, (upper_bound-lower_bound)/1000))
+    x_points = np.array(list(decimalRange(lower_bound,upper_bound, (upper_bound-lower_bound)/1000)),dtype=float)
 
     for i in range(num_rect):
         coords.append(current_x+rect_distance*counter)
@@ -33,9 +34,9 @@ def figurePlot():
         print('You didn\'t input a recognizable rule, so this will be approximated via the left_hand rule.\n')
         
     typeOfRule='Righthand' if typeOfRule=='R' else('Lefthand' if typeOfRule=='L' else 'Midpoint')
-        
-    y = [eval(cleanup(function)) for x in coords]
-    y_points = [eval(cleanup(function)) for x in x_points]
+    
+    y = np.array([eval(cleanup(function)) for x in coords],dtype=float)
+    y_points = np.array([eval(cleanup(function)) for x in x_points],dtype=float)
     
     coordCount=0
     for coord in range(num_rect):
@@ -43,8 +44,8 @@ def figurePlot():
         sumApprox+=rect_distance*y[coordCount]
         coordCount+=1
 
-    plt.xlim([lower_bound-1,upper_bound+1]) 
-    plt.ylim([min(y)-1,max(y)+1])
+    plt.xlim(lower_bound-1,upper_bound+1) 
+    plt.ylim(min(y)-1,max(y)+1)
     plt.ylabel('Y Values')
     plt.xlabel('X Values')
     plt.plot(x_points,y_points)
@@ -71,3 +72,4 @@ def rightHandRule(coords,rect_length):
 
 def midPointRule(coords,rect_length):
     coords = [x+rect_length/2 for x in coords]
+    return coords

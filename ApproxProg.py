@@ -7,7 +7,7 @@ def figurePlot():
     ax = fig.add_subplot(111) 
 
     function = input('Input the function you\'d like to approximate the integral of: ')
-    typeOfRule = input('What type of rule would you like to estimate the integral with? Righthand, Lefthand, or Midpoint?: ')
+    typeOfRule = input('What type of rule would you like to estimate the integral with? Righthand(R), Lefthand(L), or Midpoint(M)?: ')
     num_rect = int(input('Input the number of rectangles you\'d like to approximate this integral with: '))
     bounds = input('Input the lower and upper bounds of the integrable region in the form [a,b]: ')
     lower_bound = int(bounds.split(',')[0][1:])
@@ -17,24 +17,26 @@ def figurePlot():
     counter=0
     coords = []
     sumApprox = 0
+    x_points = list(decimalRange(lower_bound,upper_bound, (upper_bound-lower_bound)/1000))
 
     for i in range(num_rect):
         coords.append(current_x+rect_distance*counter)
         counter+=1
         
-    if typeOfRule == 'Righthand':
+    if typeOfRule == 'R':
         coords = rightHandRule(coords,rect_distance)
         
-    elif typeOfRule == 'Lefthand':
-        pass
-        
-    elif typeOfRule == 'Midpoint':
+    elif typeOfRule == 'M':
         coords = midPointRule(coords,rect_distance)
         
     else:
         print('You didn\'t input a recognizable rule, so this will be approximated via the left_hand rule.\n')
         
-    y = [float(eval(cleanup(function))) for x in coords]
+    typeOfRule='Righthand' if typeOfRule=='R' else('Lefthand' if typeOfRule=='L' else 'Midpoint')
+        
+    y = [eval(cleanup(function)) for x in coords]
+    y_points = [eval(cleanup(function)) for x in x_points]
+    
     coordCount=0
     for coord in range(num_rect):
         ax.add_patch(matplotlib.patches.Rectangle((coords[coordCount],0),rect_distance,y[coordCount],color='red'))
@@ -45,7 +47,7 @@ def figurePlot():
     plt.ylim([min(y)-1,max(y)+1])
     plt.ylabel('Y Values')
     plt.xlabel('X Values')
-    plt.plot(coords,y)
+    plt.plot(x_points,y_points)
 
     plt.show() 
 
@@ -56,6 +58,12 @@ def cleanup(function):
         function=function.replace('^','**')
         
     return function
+
+def decimalRange(start, stop, step=1.0):
+    i = start
+    while i < stop:
+        yield i
+        i += step
     
 def rightHandRule(coords,rect_length):
     coords = [x+rect_length for x in coords]

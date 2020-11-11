@@ -5,17 +5,20 @@ import numpy as np
 import sys
   
 def figurePlot():
+    # Creation of figure and subfigure for graphing the function and drawing rectangles/triangles
     fig = plt.figure() 
-    ax = fig.add_subplot(111) 
-
+    ax = fig.add_subplot(111)
+    
+    # Getting input from user to approximate integrals
     function = input('What function would you like to estimate the integral of?\n')
     typeOfRule = input('\nWhat type of rule would you like to estimate the integral with? Righthand(R), Lefthand(L), Midpoint(M), or Trapezoid(T)?\n')
     num_rect = int(input('\nHow many bins would you like to approximate the integral with?\n'))
     bounds = input('\nInput the lower and upper bounds of the integrable region in the form [a,b]:\n')
+    
+    # Variables and calculations of variables to be used later
     lower_bound = float(bounds.split(',')[0][1:])
     upper_bound = float(bounds.split(',')[1][:-1])
     rect_distance = (upper_bound-lower_bound)/num_rect
-    current_x = lower_bound
     counter=0
     coords = []
     leftCoords = []
@@ -24,12 +27,14 @@ def figurePlot():
     x_points = np.array(list(decimalRange(lower_bound,upper_bound, (upper_bound-lower_bound)/1000)),dtype=float)
     y_points = np.array([eval(cleanup(function)) for x in x_points],dtype=float)
 
+    # Generating the x-coords for our rectangles
     for i in range(num_rect):
-        leftCoords.append(current_x+rect_distance*counter)
-        rightCoords.append(current_x + rect_distance*(counter+1))
-        coords.append(current_x+rect_distance*counter)
+        leftCoords.append(lower_bound+rect_distance*counter)
+        rightCoords.append(lower_bound + rect_distance*(counter+1))
+        coords.append(lower_bounds+rect_distance*counter)
         counter+=1
-    
+        
+    # Modifying the y-values given the type of approx technique you want to use
     if typeOfRule == 'R':
         y = rightHandRule(coords,rect_distance,function)
         
@@ -44,18 +49,21 @@ def figurePlot():
         sumApprox+=y[len(y)-1]
         y = y[:-1]
         y = np.array(y,dtype=float)
+    
     else:
         print('You didn\'t input a recognizable rule, so this will be approximated via the left_hand rule.\n')
         
     typeOfRule='Righthand' if typeOfRule=='R' else('Lefthand' if typeOfRule=='L' else ('Midpoint' if typeOfRule=='M' else 'Trapezoid'))
     
+    # Plots the standard rectangles for left,right,mid rules
     if typeOfRule !='Trapezoid':
         coordCount=0
         for coord in range(num_rect):
             ax.add_patch(matplotlib.patches.Rectangle((coords[coordCount],0),rect_distance,y[coordCount],color='red'))
             sumApprox+=rect_distance*y[coordCount]
             coordCount+=1
-
+            
+    # Creates the bounds for the graph so all the important parts are visible
     plt.xlim(lower_bound -(0.05)*abs(lower_bound),upper_bound + 0.05*abs(upper_bound)) 
     
     if max(y) + 1 < 0:
@@ -66,7 +74,8 @@ def figurePlot():
         
     else:
         plt.ylim(min(y)-1,max(y)+1)
-        
+    
+    # 'Beautifies' the graph
     plt.ylabel('y Values')
     plt.xlabel('x Values')
     plt.plot(x_points,y_points)
@@ -86,6 +95,7 @@ def figurePlot():
         except:
             pass
 
+# Ded used to cleanup user input so the modules imported recognize the functions that are to be used
 def cleanup(function):
     if '^' in function:
         function=function.replace('^','**')\
@@ -96,20 +106,24 @@ def cleanup(function):
             function = function.replace(item,'a'+item[3:])
     return function
 
+# Used to create a LOT of points to graph the actual function so rectangles are visible next to a line function
 def decimalRange(start, stop, step=1.0):
     i = start
     while i < stop:
         yield i
         i += step
-    
+
+# Creates x,y coords for right-hand rule
 def rightHandRule(coords,rect_length,function):
     coords = [x+rect_length for x in coords]
     return np.array([eval(cleanup(function)) for x in coords],dtype=float)
 
+# Creates x,y coords for mid-point rule
 def midPointRule(coords,rect_length,function):
     coords = [x+rect_length/2 for x in coords]
     return np.array([eval(cleanup(function)) for x in coords],dtype=float)
 
+# Creates the trapezoids used for estimation if the user wants to not use the first three rules
 def drawTrapezoids(leftCoords,rightCoords,rect_distance,function,ax):
     counter=0
     currentSum=0

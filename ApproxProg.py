@@ -12,8 +12,8 @@ def figurePlot():
     typeOfRule = input('\nWhat type of rule would you like to estimate the integral with? Righthand(R), Lefthand(L), Midpoint(M), or Trapezoid(T)?\n')
     num_rect = int(input('\nHow many bins would you like to approximate the integral with?\n'))
     bounds = input('\nInput the lower and upper bounds of the integrable region in the form [a,b]:\n')
-    lower_bound = int(bounds.split(',')[0][1:])
-    upper_bound = int(bounds.split(',')[1][:-1])
+    lower_bound = float(bounds.split(',')[0][1:])
+    upper_bound = float(bounds.split(',')[1][:-1])
     rect_distance = (upper_bound-lower_bound)/num_rect
     current_x = lower_bound
     counter=0
@@ -70,7 +70,7 @@ def figurePlot():
     plt.ylabel('y Values')
     plt.xlabel('x Values')
     plt.plot(x_points,y_points)
-    plt.title('Graph of '+function)
+    plt.title('Graph of \''+function+'\'')
     plt.show() 
 
     print('Estimated Sum using '+typeOfRule+' rule: '+str(sumApprox))
@@ -88,8 +88,12 @@ def figurePlot():
 
 def cleanup(function):
     if '^' in function:
-        function=function.replace('^','**')
-        
+        function=function.replace('^','**')\
+    
+    types = ['arcsin','arccos','arctan','arcsec','arccsc','arccot']
+    for item in types:
+        if item in function:
+            function = function.replace(item,'a'+item[3:])
     return function
 
 def decimalRange(start, stop, step=1.0):

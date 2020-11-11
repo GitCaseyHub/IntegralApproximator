@@ -31,7 +31,7 @@ def figurePlot():
     for i in range(num_rect):
         leftCoords.append(lower_bound+rect_distance*counter)
         rightCoords.append(lower_bound + rect_distance*(counter+1))
-        coords.append(lower_bounds+rect_distance*counter)
+        coords.append(lower_bound+rect_distance*counter)
         counter+=1
         
     # Modifying the y-values given the type of approx technique you want to use

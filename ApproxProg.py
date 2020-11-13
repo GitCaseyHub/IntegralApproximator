@@ -118,6 +118,7 @@ def figurePlot():
     except:
         try:
             print('An error has occurred and the program will be shutting down.')
+            fig.clear()
             sys.exit()
         except:
             pass

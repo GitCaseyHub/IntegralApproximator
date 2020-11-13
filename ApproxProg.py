@@ -103,7 +103,7 @@ def figurePlot():
         plt.title('Graph of \''+function+'\'')
         plt.show() 
 
-        print('Estimated Sum using '+typeOfRule+' rule: '+str(sumApprox))
+        print('Estimated Sum: '+str(sumApprox))
         repeat = input('Would you like to estimate another function?\n')
 
         if repeat=='yes':

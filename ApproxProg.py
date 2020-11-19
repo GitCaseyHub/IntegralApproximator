@@ -123,7 +123,7 @@ def figurePlot():
         except:
             pass
 
-# Ded used to cleanup user input so the modules imported recognize the functions that are to be used
+# Def used to cleanup user input so the modules imported recognize the functions that are to be used
 def cleanup(function):
     if '^' in function:
         function=function.replace('^','**')\

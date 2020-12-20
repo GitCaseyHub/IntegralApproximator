@@ -74,7 +74,7 @@ def figurePlot():
             print('You didn\'t input a recognizable rule, so this will be approximated via the left_hand rule.\n')
 
         typeOfRule='Righthand' if typeOfRule=='R' else('Lefthand' if typeOfRule=='L' else ('Midpoint' if typeOfRule=='M' else 'Trapezoid'))
-        print('\nPerfect. Now we will estimate '+function+' with '+str(num_rect)+' bins using the '+typeOfRule+' Rule')
+        print('\nPerfect. Now we will estimate the integral of '+function+' over the interval ['+str(lower_bound)+', '+str(upper_bound)+'] with '+str(num_rect)+' bins using the '+typeOfRule+' Rule.')
 
         # Plots the standard rectangles for left,right,mid rules
         if typeOfRule !='Trapezoid':

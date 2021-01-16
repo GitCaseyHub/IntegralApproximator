@@ -107,6 +107,7 @@ def figurePlot():
         repeat = input('Would you like to estimate another function?\n')
 
         if repeat=='yes':
+            print('\n\n\n')
             figurePlot()
 
         else:
